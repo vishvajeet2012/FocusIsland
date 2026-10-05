@@ -22,3 +22,7 @@ FocusIsland is a lightweight productivity island for Windows and macOS. It runs 
 - `SHA256SUMS.txt` — verify downloads
 
 The binaries are currently unsigned and not notarized. macOS Gatekeeper or Windows SmartScreen may ask for confirmation.
+
+### Privacy
+
+FocusIsland stores app data locally and does not use analytics or telemetry. See the [privacy policy](https://github.com/vishvajeet2012/FocusIsland/blob/main/PRIVACY.md).
