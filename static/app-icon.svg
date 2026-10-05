@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">FocusIsland</title>
+  <desc id="description">A golden focus point floating above a calm green island and lavender reflection.</desc>
+  <defs>
+    <linearGradient id="background" x1="84" y1="64" x2="426" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#15191A"/>
+      <stop offset="1" stop-color="#060708"/>
+    </linearGradient>
+    <linearGradient id="island" x1="118" y1="208" x2="394" y2="286" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D7EBD8"/>
+      <stop offset="1" stop-color="#9FCDB0"/>
+    </linearGradient>
+    <linearGradient id="focus" x1="229" y1="135" x2="284" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE3A1"/>
+      <stop offset="1" stop-color="#F1BD64"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="144" fill="url(#background)"/>
+  <circle cx="256" cy="161" r="37" fill="url(#focus)"/>
+  <path d="M118 292c33-61 83-90 138-90s105 29 138 90" fill="none" stroke="url(#island)" stroke-width="58" stroke-linecap="round"/>
+  <path d="M169 360c25 21 54 32 87 32s62-11 87-32" fill="none" stroke="#AFB9E4" stroke-width="30" stroke-linecap="round"/>
+</svg>

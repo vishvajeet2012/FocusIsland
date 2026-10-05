@@ -1,0 +1,101 @@
+:root {
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --motion-fast: 120ms;
+  --motion-normal: 200ms;
+  --motion-slow: 320ms;
+  --island-open-duration: 320ms;
+  --card-duration: 205ms;
+  --tab-duration: 180ms;
+  --modal-duration: 180ms;
+  --ease-standard: cubic-bezier(.2,.8,.2,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --ease-island: cubic-bezier(.22,1,.36,1);
+  --island-open-width: 350ms;
+  --island-open-height: 285ms;
+  --island-open-radius: 270ms;
+  --island-open-shadow: 320ms;
+  --island-open-height-delay: 32ms;
+  --island-open-radius-delay: 16ms;
+  --island-close-width: 255ms;
+  --island-close-height: 225ms;
+  --island-close-radius: 215ms;
+  --island-close-shadow: 240ms;
+  --island-close-width-delay: 14ms;
+  --island-close-radius-delay: 8ms;
+  --quick-open-width: 230ms;
+  --quick-open-height: 175ms;
+  --quick-open-radius: 190ms;
+  --quick-open-shadow: 210ms;
+  --quick-open-height-delay: 18ms;
+  --quick-close-width: 190ms;
+  --quick-close-height: 165ms;
+  --quick-close-radius: 170ms;
+  --quick-close-shadow: 180ms;
+  --quick-close-width-delay: 8ms;
+  --card-delay-1: 100ms;
+  --card-delay-2: 124ms;
+  --card-delay-3: 148ms;
+  --card-delay-4: 172ms;
+  --collapsed-width: 228px;
+  --collapsed-height: 52px;
+  color: transparent;
+  background: transparent;
+}
+
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent !important; }
+body { user-select: none; }
+button, input, textarea, select { font-family: inherit; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid rgba(196,222,201,.75); outline-offset: 2px; }
+::selection { color: #142018; background: rgba(164,197,170,.75); }
+
+.app-host { box-sizing: border-box; display: grid; place-items: start center; width: 100%; height: 100%; overflow: hidden; }
+.app-host.size-compact { --collapsed-width: 202px; --collapsed-height: 46px; }
+.app-host.size-large { --collapsed-width: 254px; --collapsed-height: 58px; }
+
+.card { box-sizing: border-box; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 13px; overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: 19px; box-shadow: inset 0 1px rgba(255,255,255,.25), 0 2px 9px rgba(0,0,0,.08); transition: transform var(--motion-fast) var(--ease-standard), filter var(--motion-fast) ease; }
+.card:hover { transform: translateY(-1px); filter: saturate(1.02); }
+
+[data-motion="reduced"] {
+  --motion-fast: 90ms;
+  --motion-normal: 120ms;
+  --motion-slow: 160ms;
+  --island-open-duration: 170ms;
+  --card-duration: 115ms;
+  --modal-duration: 120ms;
+  --island-open-width: 170ms;
+  --island-open-height: 140ms;
+  --island-open-radius: 135ms;
+  --island-open-shadow: 155ms;
+  --island-open-height-delay: 16ms;
+  --island-open-radius-delay: 8ms;
+  --island-close-width: 140ms;
+  --island-close-height: 120ms;
+  --island-close-radius: 115ms;
+  --island-close-shadow: 125ms;
+  --island-close-width-delay: 6ms;
+  --island-close-radius-delay: 4ms;
+  --quick-open-width: 125ms;
+  --quick-open-height: 105ms;
+  --quick-open-radius: 105ms;
+  --quick-open-shadow: 115ms;
+  --quick-open-height-delay: 8ms;
+  --quick-close-width: 110ms;
+  --quick-close-height: 95ms;
+  --quick-close-radius: 95ms;
+  --quick-close-shadow: 100ms;
+  --quick-close-width-delay: 4ms;
+  --card-delay-1: 45ms;
+  --card-delay-2: 60ms;
+  --card-delay-3: 75ms;
+  --card-delay-4: 90ms;
+}
+[data-motion="off"] { --motion-fast: 0ms; --motion-normal: 0ms; --motion-slow: 0ms; --island-open-duration: 0ms; --card-duration: 0ms; --tab-duration: 0ms; --modal-duration: 0ms; }
+[data-motion="off"], [data-motion="off"] *, [data-motion="off"] *::before, [data-motion="off"] *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-fast: 0ms; --motion-normal: 0ms; --motion-slow: 0ms; --island-open-duration: 0ms; --card-duration: 0ms; --tab-duration: 0ms; --modal-duration: 0ms; }
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
