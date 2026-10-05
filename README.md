@@ -6,6 +6,8 @@ FocusIsland is a lightweight, offline-first productivity island for Windows and 
 
 FocusIsland is free and open-source software released under the MIT License. It has no accounts, cloud dependency, analytics, or telemetry.
 
+[Privacy policy](PRIVACY.md) · [Source code](https://github.com/vishvajeet2012/FocusIsland) · [Releases](https://github.com/vishvajeet2012/FocusIsland/releases)
+
 [Download the latest release for Windows or macOS](https://github.com/vishvajeet2012/FocusIsland/releases/latest)
 
 The product name and shared brand icon path shown in the frontend are isolated in [`src/lib/constants.ts`](src/lib/constants.ts). The original SVG source of truth is [`static/app-icon.svg`](static/app-icon.svg), with native icon sizes generated from it. Native runtime strings are grouped in `src-tauri/src/constants.rs`, while installer identity metadata lives in `src-tauri/tauri.conf.json` as required by Tauri.
