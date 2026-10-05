@@ -73,6 +73,10 @@ pub fn create(app: &tauri::AppHandle) -> Result<(), String> {
                 let _ = app.emit("shortcut-action", "toggle");
             }
         });
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder.show_menu_on_left_click(true);
+    }
     if let Some(icon) = app.default_window_icon() {
         builder = builder.icon(icon.clone());
     }

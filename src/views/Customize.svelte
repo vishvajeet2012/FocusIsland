@@ -50,6 +50,7 @@
 
   const bool = (event: Event): boolean => (event.currentTarget as HTMLInputElement).checked;
   const value = (event: Event): string => (event.currentTarget as HTMLInputElement | HTMLSelectElement).value;
+  const platformName = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform) ? "macOS" : "Windows";
 </script>
 
 <div class="customize-view" use:protectFromFocusLoss>
@@ -69,7 +70,7 @@
     {/if}
     <section>
       <h3>Appearance</h3>
-      <div class="setting"><div><b>Theme</b><span>Follow Windows or choose a mode</span></div><select value={$settingsStore.theme} onchange={(event) => patch({ theme: value(event) as AppSettings["theme"] })}><option value="system">System</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
+      <div class="setting"><div><b>Theme</b><span>Follow {platformName} or choose a mode</span></div><select value={$settingsStore.theme} onchange={(event) => patch({ theme: value(event) as AppSettings["theme"] })}><option value="system">System</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
       <div class="setting color-setting"><div><b>Workspace</b><span>Shell background</span></div><label><input type="color" value={$settingsStore.workspaceBackground} oninput={(event) => patch({ workspaceBackground: value(event) })} /><code>{$settingsStore.workspaceBackground}</code></label></div>
       <div class="color-grid">
         <label>Tasks<input type="color" value={$settingsStore.taskCardColor} oninput={(event) => patch({ taskCardColor: value(event) })} /></label>
@@ -78,7 +79,7 @@
         <label>Events<input type="color" value={$settingsStore.eventsCardColor} oninput={(event) => patch({ eventsCardColor: value(event) })} /></label>
       </div>
       <div class="setting"><div><b>Island size</b><span>Collapsed footprint</span></div><select value={$settingsStore.islandSize} onchange={(event) => patch({ islandSize: value(event) as AppSettings["islandSize"] })}><option value="compact">Compact</option><option value="normal">Normal</option><option value="large">Large</option></select></div>
-      <div class="setting"><div><b>Animation intensity</b><span>Also respects Windows motion settings</span></div><select value={$settingsStore.animationIntensity} onchange={(event) => patch({ animationIntensity: value(event) as AppSettings["animationIntensity"] })}><option value="full">Full</option><option value="reduced">Reduced</option><option value="off">Off</option></select></div>
+      <div class="setting"><div><b>Animation intensity</b><span>Also respects {platformName} motion settings</span></div><select value={$settingsStore.animationIntensity} onchange={(event) => patch({ animationIntensity: value(event) as AppSettings["animationIntensity"] })}><option value="full">Full</option><option value="reduced">Reduced</option><option value="off">Off</option></select></div>
     </section>
     <section>
       <h3>Island behavior</h3>
@@ -91,10 +92,10 @@
       <div class="setting"><div><b>Top gap</b><span>Distance from screen edge</span></div><select value={$settingsStore.topGap} onchange={(event) => patch({ topGap: Number(value(event)) as AppSettings["topGap"] })}><option value="0">0 px</option><option value="6">6 px</option><option value="12">12 px</option></select></div>
     </section>
     <section>
-      <h3>Windows</h3>
+      <h3>{platformName}</h3>
       <div class="setting"><div><b>Always on top</b><span>Keep {PRODUCT_NAME} above other windows</span></div><input class="switch" type="checkbox" checked={$settingsStore.alwaysOnTop} onchange={(event) => patch({ alwaysOnTop: bool(event) })} /></div>
-      <div class="setting"><div><b>Launch on startup</b><span>Start after you sign in to Windows</span></div><input class="switch" type="checkbox" checked={$settingsStore.launchOnStartup} onchange={(event) => patch({ launchOnStartup: bool(event) })} /></div>
-      <div class="setting"><div><b>Show tray icon</b><span>Keep quick actions in the notification area</span></div><input class="switch" type="checkbox" checked={$settingsStore.showTrayIcon} onchange={(event) => patch({ showTrayIcon: bool(event) })} /></div>
+      <div class="setting"><div><b>Launch on startup</b><span>Start after you sign in to {platformName}</span></div><input class="switch" type="checkbox" checked={$settingsStore.launchOnStartup} onchange={(event) => patch({ launchOnStartup: bool(event) })} /></div>
+      <div class="setting"><div><b>Show {platformName === "macOS" ? "menu bar" : "tray"} icon</b><span>Keep quick actions in the {platformName === "macOS" ? "menu bar" : "notification area"}</span></div><input class="switch" type="checkbox" checked={$settingsStore.showTrayIcon} onchange={(event) => patch({ showTrayIcon: bool(event) })} /></div>
       <div class="setting"><div><b>Notifications</b><span>Timer completions and reminders</span></div><input class="switch" type="checkbox" checked={$settingsStore.notificationsEnabled} onchange={(event) => patch({ notificationsEnabled: bool(event) })} /></div>
       <div class="setting"><div><b>Notification sounds</b><span>Off by default for quiet focus</span></div><input class="switch" type="checkbox" checked={$settingsStore.notificationSounds} onchange={(event) => patch({ notificationSounds: bool(event) })} /></div>
     </section>

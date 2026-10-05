@@ -2,6 +2,19 @@
 
 All notable changes to FocusIsland are documented here.
 
+## [0.2.0] - 2026-10-05
+
+### Added
+
+- Native macOS desktop support with a Universal 2 app for Intel and Apple Silicon Macs.
+- macOS menu bar actions, system notifications, startup launch, and monitor-aware positioning.
+- GitHub Actions release builds for Windows and macOS.
+
+### Changed
+
+- Platform-specific settings now use the correct Windows or macOS labels.
+- Tauri bundle metadata now describes both supported desktop platforms.
+
 ## [0.1.0] - 2026-10-05
 
 ### Added
@@ -19,4 +32,5 @@ All notable changes to FocusIsland are documented here.
 - All application data remains local.
 - No accounts, analytics, telemetry, or cloud dependency.
 
+[0.2.0]: https://github.com/vishvajeet2012/FocusIsland/releases/tag/v0.2.0
 [0.1.0]: https://github.com/vishvajeet2012/FocusIsland/releases/tag/v0.1.0

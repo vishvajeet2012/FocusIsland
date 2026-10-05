@@ -1,7 +1,7 @@
 [package]
 name = "focusisland"
-version = "0.1.0"
-description = "A lightweight, offline-first productivity island for Windows"
+version = "0.2.0"
+description = "A lightweight, offline-first productivity island for Windows and macOS"
 authors = ["Vishvajeet Shukla"]
 edition = "2021"
 license = "MIT"

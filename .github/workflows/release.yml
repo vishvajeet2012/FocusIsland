@@ -1,0 +1,98 @@
+name: Build and release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    name: Windows x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - run: npm ci
+      - run: npm run check
+      - run: cargo test --manifest-path src-tauri/Cargo.toml
+      - run: npm run tauri -- build --bundles nsis --ci --no-sign
+      - shell: pwsh
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          New-Item -ItemType Directory -Path release-assets -Force | Out-Null
+          $version = $env:GITHUB_REF_NAME.Substring(1)
+          Copy-Item "src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/FocusIsland_${version}_x64-setup.exe" release-assets/
+          Copy-Item src-tauri/target/x86_64-pc-windows-msvc/release/focusisland.exe release-assets/FocusIsland.exe
+      - uses: actions/upload-artifact@v4
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          name: windows-release-assets
+          path: release-assets/*
+          if-no-files-found: error
+
+  macos:
+    name: macOS Universal 2
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      - run: npm ci
+      - run: npm run check
+      - run: cargo test --manifest-path src-tauri/Cargo.toml
+      - run: npm run tauri -- build --target universal-apple-darwin --bundles dmg --ci --no-sign
+      - name: Stage macOS installer
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          mkdir -p release-assets
+          version="${GITHUB_REF_NAME#v}"
+          cp src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg "release-assets/FocusIsland_${version}_universal.dmg"
+      - uses: actions/upload-artifact@v4
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          name: macos-release-assets
+          path: release-assets/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*-release-assets"
+          path: release-assets
+          merge-multiple: true
+      - name: Generate checksums
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: |
+          cd release-assets
+          version="${RELEASE_VERSION#v}"
+          shasum -a 256 FocusIsland.exe "FocusIsland_${version}_x64-setup.exe" "FocusIsland_${version}_universal.dmg" > SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: FocusIsland ${{ github.ref_name }}
+          body_path: .github/release-notes.md
+          files: release-assets/*
+          draft: false
+          prerelease: false

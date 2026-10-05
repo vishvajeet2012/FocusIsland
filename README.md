@@ -2,38 +2,39 @@
 
 # FocusIsland
 
-FocusIsland is a lightweight, offline-first productivity island for Windows. It lives at the top center of a monitor as a compact timer pill and expands into a focused workspace for tasks, countdowns, stopwatch sessions, daily notes, reminders, insights, and appearance settings.
+FocusIsland is a lightweight, offline-first productivity island for Windows and macOS. It lives at the top center of a monitor as a compact timer pill and expands into a focused workspace for tasks, countdowns, stopwatch sessions, daily notes, reminders, insights, and appearance settings.
 
 FocusIsland is free and open-source software released under the MIT License. It has no accounts, cloud dependency, analytics, or telemetry.
 
-[Download the latest Windows release](https://github.com/vishvajeet2012/FocusIsland/releases/latest)
+[Download the latest release for Windows or macOS](https://github.com/vishvajeet2012/FocusIsland/releases/latest)
 
 The product name and shared brand icon path shown in the frontend are isolated in [`src/lib/constants.ts`](src/lib/constants.ts). The original SVG source of truth is [`static/app-icon.svg`](static/app-icon.svg), with native icon sizes generated from it. Native runtime strings are grouped in `src-tauri/src/constants.rs`, while installer identity metadata lives in `src-tauri/tauri.conf.json` as required by Tauri.
 
 ## Features
 
-- Top-center, borderless, transparent, always-on-top Windows utility window
-- Per-monitor work-area positioning with DPI-aware sizing from 100% through 200%+
+- Top-center, borderless, transparent, always-on-top desktop utility window
+- Per-monitor work-area positioning and DPI-aware sizing on Windows and macOS
 - Hybrid island animation: one native host resize per transition plus a CSS inner-shell morph
 - Task create, edit, complete, restore, delete, duplicate, archive, reminder, focus, and drag reorder flows
 - Drift-free countdown and stopwatch modes calculated from persisted timestamps
-- Timer recovery after collapse, app restart, Windows sleep, and wake
+- Timer recovery after collapse, app restart, and computer sleep/wake
 - Daily notepad with 450 ms autosave and `Ctrl + Enter` line-to-task conversion
-- Local reminder scheduler and native Windows toast notifications
+- Local reminder scheduler and native system notifications
 - SQLite-backed focus sessions and real seven-day insights
-- Custom colors, theme, island behavior, monitor policy, motion level, notifications, time format, and Windows startup settings
-- Native tray menu, three global shortcuts, and compact quick-task island
+- Custom colors, theme, island behavior, monitor policy, motion level, notifications, time format, and startup settings
+- Native system tray/menu bar, three global shortcuts, and compact quick-task island
 - No analytics, telemetry, accounts, cloud calls, or normal-operation network dependency
 
 ## Download
 
-Open the [latest release](https://github.com/vishvajeet2012/FocusIsland/releases/latest) and choose:
+Open the [latest release](https://github.com/vishvajeet2012/FocusIsland/releases/latest) and choose the download for your computer:
 
-- `FocusIsland_0.1.0_x64-setup.exe` for the recommended per-user Windows installer.
+- `FocusIsland_0.2.0_x64-setup.exe` for the recommended per-user Windows installer.
 - `FocusIsland.exe` for a portable launch without installation.
 - `SHA256SUMS.txt` to verify either download.
+- `FocusIsland_0.2.0_universal.dmg` for macOS, supporting Intel and Apple Silicon.
 
-FocusIsland currently targets 64-bit Windows 10/11 and requires the Microsoft Edge WebView2 Runtime. Release binaries are not yet code-signed, so Windows SmartScreen may ask for confirmation.
+The Windows edition targets 64-bit Windows 10/11 and requires the Microsoft Edge WebView2 Runtime. The macOS edition targets macOS 12 or later and is built as a Universal 2 app for Intel and Apple Silicon. Release binaries are not yet code-signed/notarized, so Windows SmartScreen or macOS Gatekeeper may show a warning.
 
 ## Tech stack
 
@@ -42,13 +43,13 @@ FocusIsland currently targets 64-bit Windows 10/11 and requires the Microsoft Ed
 - Plain CSS and original SVG branding/icons
 - SQLite through `rusqlite` with bundled SQLite
 - Tauri notification, global-shortcut, and autostart plugins
-- `windows-rs` for Windows monitor work areas and effective DPI
+- `windows-rs` for Windows monitor work areas and effective DPI; Tauri's native monitor APIs for macOS
 
 No Electron runtime, UI framework, animation library, chart package, date library, icon pack, or background server is used.
 
 ## Development setup
 
-Requirements: Windows 10/11, the Edge WebView2 Runtime, Node.js 20+, Rust stable with the MSVC target, and Visual Studio 2022 Build Tools with Desktop development with C++ plus a Windows SDK.
+Requirements: Windows 10/11 with WebView2 and Visual Studio 2022 Build Tools, or macOS 12+ with Xcode Command Line Tools. Both need Node.js 20+ and Rust stable. Use a Mac to build or run the macOS app.
 
 ```powershell
 cd C:\path\to\FocusIsland
@@ -64,19 +65,29 @@ npm run build
 npm run preview
 ```
 
-## Production build
+## Production builds
 
 ```powershell
 npm install
 npm run check
 npm run build
 cargo test --manifest-path src-tauri\Cargo.toml
-npm run tauri build
+npm run tauri -- build
 ```
 
-The configured target is a per-user NSIS installer. Tauri writes it to `src-tauri\target\release\bundle\nsis\`. If `CARGO_TARGET_DIR` is set, the same `release\bundle\nsis` path is created below that directory.
+On Windows, the configured target is a per-user NSIS installer at `src-tauri\target\release\bundle\nsis\`. On macOS, create an Intel + Apple Silicon Universal 2 DMG with:
 
-Validated release copies from the current build are available in `artifacts\`: the NSIS installer and a standalone executable. Production distribution should sign both with the publisher's Windows code-signing certificate.
+```sh
+npm install
+npm run check
+npm run build
+cargo test --manifest-path src-tauri/Cargo.toml
+npm run tauri -- build --target universal-apple-darwin --bundles dmg
+```
+
+Tauri writes the DMG to `src-tauri/target/universal-apple-darwin/release/bundle/dmg/`. GitHub Actions builds both platform packages for each version tag.
+
+Windows release copies from the local build are available in `artifacts\`: the NSIS installer and standalone executable. Public tagged releases include both Windows downloads, checksums, and the macOS Universal 2 DMG. Production distribution should sign and notarize binaries with the publisher's platform certificates.
 
 ## Keyboard shortcuts
 
@@ -94,7 +105,7 @@ Global shortcut registration failures are non-fatal and appear in Customize.
 
 ## Local data
 
-The SQLite database is stored at `%APPDATA%\com.focusisland.desktop\focusisland.sqlite3`.
+The SQLite database is stored in Tauri's platform app-data folder as `focusisland.sqlite3` (Windows: `%APPDATA%\com.focusisland.desktop\`; macOS: `~/Library/Application Support/com.focusisland.desktop/`).
 
 SQLite runs in WAL mode with foreign keys, normal synchronous durability, a busy timeout, and indexed deadline/date queries. A storage failure falls back to an in-memory database and surfaces a warning instead of producing a blank screen.
 
@@ -119,7 +130,7 @@ src/
 src-tauri/src/
   commands/          narrow, validated Tauri command boundary
   db/                schema and domain repositories
-  windows/           DPI-aware work-area positioning and window operations
+  windows/           DPI-aware Windows/macOS monitor positioning and window operations
   notifications/     native notification construction
   shortcuts/         registration, failure reporting, and event routing
   tray/              native menu and double-click handling
@@ -145,6 +156,8 @@ Repository tests cover task persistence and completion, daily note restoration, 
 ## Privacy and security
 
 FocusIsland is entirely local. It makes no analytics or telemetry calls and has no account or cloud subsystem. Tauri capabilities expose only core window/event functionality; all mutation goes through explicit commands with length, range, enum, date, and color validation. No shell execution API is exposed to the webview.
+
+On macOS, FocusIsland behaves as a menu bar utility and stays out of the Dock. Use the menu bar icon or the global shortcut to show the island, and choose Quit from the menu bar menu to exit.
 
 ## Contributing
 

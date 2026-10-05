@@ -33,7 +33,7 @@ pub fn set_window_mode(
     let window = app
         .get_webview_window("main")
         .ok_or("Main window is unavailable")?;
-    let monitor = monitor_geometry(&monitor_mode)?;
+    let monitor = monitor_geometry(&monitor_mode, &window)?;
     let (logical_width, logical_height): (f64, f64) = match mode.as_str() {
         "expanded" => (948.0, 420.0),
         "quick" => (430.0, 64.0),
@@ -93,7 +93,7 @@ pub fn show_without_error(app: &tauri::AppHandle) {
 }
 
 #[cfg(windows)]
-fn monitor_geometry(mode: &str) -> Result<MonitorGeometry, String> {
+fn monitor_geometry(mode: &str, _window: &tauri::WebviewWindow) -> Result<MonitorGeometry, String> {
     use std::mem::size_of;
     use windows::Win32::{
         Foundation::POINT,
@@ -141,12 +141,26 @@ fn monitor_geometry(mode: &str) -> Result<MonitorGeometry, String> {
 }
 
 #[cfg(not(windows))]
-fn monitor_geometry(_mode: &str) -> Result<MonitorGeometry, String> {
+fn monitor_geometry(mode: &str, window: &tauri::WebviewWindow) -> Result<MonitorGeometry, String> {
+    let monitor = if mode == "primary" {
+        window.primary_monitor()
+    } else {
+        let cursor = window
+            .cursor_position()
+            .map_err(|error| format!("Could not read cursor position: {error}"))?;
+        window.monitor_from_point(cursor.x, cursor.y)
+    }
+    .map_err(|error| format!("Could not query display: {error}"))?
+    .ok_or("No display was found for FocusIsland")?;
+
+    let work_area = monitor.work_area();
+    let position = work_area.position;
+    let size = work_area.size;
     Ok(MonitorGeometry {
-        left: 0,
-        top: 0,
-        width: 1920,
-        height: 1080,
-        scale: 1.0,
+        left: position.x,
+        top: position.y,
+        width: size.width,
+        height: size.height,
+        scale: monitor.scale_factor().clamp(1.0, 4.0),
     })
 }
